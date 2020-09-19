@@ -17,12 +17,15 @@ class DefaultShortUrlManager(ShortUrlManager):
 
         # cache hit
         if cached_url:
-            return cached_url.decode("utf-8")
+            return cached_url
 
         # cache miss, query DB
         db_url = self.urls_tab_accessor.find_last_by_short_key(short_key)
         if db_url is None:
             raise NotFoundException(f'url not found for short_key: {short_key}')
+
+        # update cache
+        redis.setnx(short_key, db_url)
         return db_url
 
     def create(self, url: str) -> str:
