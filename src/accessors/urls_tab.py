@@ -44,7 +44,6 @@ class MysqlUrlsTabAccessor(UrlsTabAccessor):
             records = (
                 session.query(UrlsTab)
                 .filter(UrlsTab.hashed_url == url_hash)
-                .order_by(desc(UrlsTab.ctime))
                 .all()
             )
         match = next((record for record in records if record.url == url), None)
